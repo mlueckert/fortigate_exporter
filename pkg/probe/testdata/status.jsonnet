@@ -2,6 +2,9 @@
 {
   "http_method":"GET",
   "results":{
+    "model":"Fortigate",
+    "model_name":"FGMODEL1",
+    "model_number":"162312",
   },
   "vdom":"root",
   "path":"system",

@@ -13,7 +13,7 @@ func probeSystemStatus(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Met
 		mVersion = prometheus.NewDesc(
 			"fortigate_version_info",
 			"System version and build information",
-			[]string{"serial", "version", "build"}, nil,
+			[]string{"serial", "version", "build", "model_name", "model_number", "model"}, nil,
 		)
 	)
 
@@ -22,6 +22,11 @@ func probeSystemStatus(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Met
 		Serial  string
 		Version string
 		Build   int64
+		Result  struct {
+			ModelName   string `json:"model_name"`
+			ModelNumber string `json:"model_number"`
+			Model       string
+		} `json:"results"`
 	}
 	var st systemStatus
 
@@ -31,7 +36,7 @@ func probeSystemStatus(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Met
 	}
 
 	m := []prometheus.Metric{
-		prometheus.MustNewConstMetric(mVersion, prometheus.GaugeValue, 1.0, st.Serial, st.Version, fmt.Sprintf("%d", st.Build)),
+		prometheus.MustNewConstMetric(mVersion, prometheus.GaugeValue, 1.0, st.Serial, st.Version, fmt.Sprintf("%d", st.Build), st.Result.ModelName, st.Result.ModelNumber, st.Result.Model),
 	}
 	return m, true
 }
