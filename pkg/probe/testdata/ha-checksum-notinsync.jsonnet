@@ -20,7 +20,7 @@
       "checksum":{
         "global":"b6b3f51996c7da2d8adcbb44baa39750",
         "root":"74cc1c60799e0a786ac7094b532f01b1",
-        "all":"4df9cc121afe1c00de4e9e396af4cdb0"
+        "all":"4df9cc121afe1c00de4e9e396af4cdb1"
       },
       "serial_no":"SERIAL222222222"
     }

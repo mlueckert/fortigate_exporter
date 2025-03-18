@@ -50,6 +50,10 @@ func TestHAStatistics(t *testing.T) {
         # TYPE fortigate_ha_member_sessions gauge
         fortigate_ha_member_sessions{hostname="member-name-1",vdom="root"} 148
         fortigate_ha_member_sessions{hostname="member-name-2",vdom="root"} 12
+        # HELP fortigate_ha_member_uptime Amount of time the HA member device has been operating
+        # TYPE fortigate_ha_member_uptime gauge
+        fortigate_ha_member_uptime{hostname="member-name-1",vdom="root"} 2.3585371e+07
+        fortigate_ha_member_uptime{hostname="member-name-2",vdom="root"} 2.3584675e+07
         # HELP fortigate_ha_member_virus_events_total Virus events which are detected by this HA member
         # TYPE fortigate_ha_member_virus_events_total counter
         fortigate_ha_member_virus_events_total{hostname="member-name-1",vdom="root"} 0
@@ -104,6 +108,10 @@ func TestHAStatisticsNoConfigAccess(t *testing.T) {
         # TYPE fortigate_ha_member_sessions gauge
         fortigate_ha_member_sessions{hostname="member-name-1",vdom="root"} 148
         fortigate_ha_member_sessions{hostname="member-name-2",vdom="root"} 12
+        # HELP fortigate_ha_member_uptime Amount of time the HA member device has been operating
+        # TYPE fortigate_ha_member_uptime gauge
+        fortigate_ha_member_uptime{hostname="member-name-1",vdom="root"} 2.3585371e+07
+        fortigate_ha_member_uptime{hostname="member-name-2",vdom="root"} 2.3584675e+07
         # HELP fortigate_ha_member_virus_events_total Virus events which are detected by this HA member
         # TYPE fortigate_ha_member_virus_events_total counter
         fortigate_ha_member_virus_events_total{hostname="member-name-1",vdom="root"} 0

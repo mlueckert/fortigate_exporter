@@ -54,6 +54,11 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 			"Memory usage by HA member",
 			[]string{"vdom", "hostname"}, nil,
 		)
+		memberUptime = prometheus.NewDesc(
+			"fortigate_ha_member_uptime",
+			"Amount of time the HA member device has been operating",
+			[]string{"vdom", "hostname"}, nil,
+		)
 	)
 
 	type HAResults struct {
@@ -111,6 +116,7 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 		m = append(m, prometheus.MustNewConstMetric(memberIPSEvents, prometheus.CounterValue, result.IPSEvents, r.VDOM, result.Hostname))
 		m = append(m, prometheus.MustNewConstMetric(memberCpuUsage, prometheus.GaugeValue, result.CpuUsage/100, r.VDOM, result.Hostname))
 		m = append(m, prometheus.MustNewConstMetric(memberMemoryUsage, prometheus.GaugeValue, result.MemUsage/100, r.VDOM, result.Hostname))
+		m = append(m, prometheus.MustNewConstMetric(memberUptime, prometheus.GaugeValue, result.Tnow, r.VDOM, result.Hostname))
 	}
 	return m, true
 }
