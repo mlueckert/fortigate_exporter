@@ -410,6 +410,7 @@ To improve security, limit permissions to required ones only (least privilege pr
 |Firewall/IpPool              | fwgrp.policy       |api/v2/monitor/firewall/ippool |
 |Firewall/LoadBalance         | fwgrp.others       |api/v2/monitor/firewall/load-balance |
 |Firewall/Policies            | fwgrp.policy       |api/v2/monitor/firewall/policy/select<br>api/v2/monitor/firewall/policy6/select<br>api/v2/cmdb/firewall/policy<br>api/v2/cmdb/firewall/policy6 |
+|IPv4/Routes                  | netgrp.route-cfg   |api/v2/monitor/router/ipv4 |
 |License/Status               | *any*              |api/v2/monitor/license/status/select |
 |Log/Fortianalyzer/Status     | loggrp.config      |api/v2/monitor/log/fortianalyzer |
 |Log/Fortianalyzer/Queue      | loggrp.config      |api/v2/monitor/log/fortianalyzer-queue |
