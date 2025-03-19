@@ -120,6 +120,8 @@ Per-VDOM:
  * _Log/DiskUsage_
    * `fortigate_log_disk_used_bytes`
    * `fortigate_log_disk_total_bytes`
+ * _IPv4/Routes_
+   * `fortigate_ipv4_routes_total`
 
  Per-HA-Member and VDOM:
  * _System/HAStatistics_
@@ -393,6 +395,7 @@ fs124e:
 | -extra-ca-certs | (none) | comma-separated files containing extra PEMs to trust for TLS connections in addition to the system trust store |
 | -max-bgp-paths  | 10000  | Sets maximum amount of BGP paths to fetch, value is per IP stack version (IPv4 & IPv6) |
 | -max-vpn-users  | 0      | Sets maximum amount of VPN users to fetch (0 eq. none by default) |
+| -allowed-subnets  | 0.0.0.0 | comma-separated list of allowed ips or subnets. If 0.0.0.0, all IPs are allowed |
 
 ### FortiGate Configuration
 
