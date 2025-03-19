@@ -76,6 +76,35 @@ func getBuildInfo() BuildInfo {
 	return buildInfo
 }
 
+// ipRestrictionMiddleware is a middleware function that restricts access to
+// HTTP handlers based on the client's IP address. It checks if the client's IP
+// address is within the allowed subnets. If the IP address is not allowed, it
+// responds with a "Forbidden" status.
+//
+// Parameters:
+// - next: The next http.Handler to be called if the IP address is allowed.
+// - allowedSubnets: A slice of strings representing the allowed IP subnets.
+//
+// Returns:
+// - An http.Handler that wraps the next handler with IP restriction logic.
+func ipRestrictionMiddleware(next http.Handler, allowedSubnets []string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ip := strings.Split(r.RemoteAddr, ":")[0]
+		allowed := false
+		for _, subnet := range allowedSubnets {
+			if strings.HasPrefix(ip, subnet) || subnet == "0.0.0.0" {
+				allowed = true
+				break
+			}
+		}
+		if !allowed {
+			http.Error(w, "Forbidden, check allowed_subnets", http.StatusForbidden)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	buildInfo := getBuildInfo()
 	log.Printf("FortigateExporter %s ( %s )", buildInfo.version, buildInfo.gitHash)
@@ -91,8 +120,9 @@ func main() {
 		log.Fatalf("%+v", err)
 	}
 
-	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/probe", probe.ProbeHandler)
+	http.Handle("/metrics", ipRestrictionMiddleware(promhttp.Handler(), savedConfig.AllowedSubnets))
+	http.Handle("/probe", ipRestrictionMiddleware(http.HandlerFunc(probe.ProbeHandler), savedConfig.AllowedSubnets))
+
 	go func() {
 		if err := http.ListenAndServe(savedConfig.Listen, nil); err != nil {
 			log.Fatalf("Unable to serve: %v", err)

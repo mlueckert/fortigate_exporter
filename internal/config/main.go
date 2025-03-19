@@ -2,33 +2,35 @@ package config
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 )
 
 type FortiExporterParameter struct {
-	AuthFile      *string
-	Listen        *string
-	ScrapeTimeout *int
-	TLSTimeout    *int
-	TLSInsecure   *bool
-	TlsExtraCAs   *string
-	MaxBGPPaths   *int
-	MaxVPNUsers   *int
+	AuthFile       *string
+	Listen         *string
+	ScrapeTimeout  *int
+	TLSTimeout     *int
+	TLSInsecure    *bool
+	TlsExtraCAs    *string
+	MaxBGPPaths    *int
+	MaxVPNUsers    *int
+	AllowedSubnets *string
 }
 
 type FortiExporterConfig struct {
-	AuthKeys      AuthKeys
-	Listen        string
-	ScrapeTimeout int
-	TLSTimeout    int
-	TLSInsecure   bool
-	TlsExtraCAs   []LocalCert
-	MaxBGPPaths   int
-	MaxVPNUsers   int
+	AuthKeys       AuthKeys
+	Listen         string
+	ScrapeTimeout  int
+	TLSTimeout     int
+	TLSInsecure    bool
+	TlsExtraCAs    []LocalCert
+	MaxBGPPaths    int
+	MaxVPNUsers    int
+	AllowedSubnets []string
 }
 
 type AuthKeys map[Target]TargetAuth
@@ -54,14 +56,15 @@ type LocalCert struct {
 
 var (
 	parameter = FortiExporterParameter{
-		AuthFile:      flag.String("auth-file", "fortigate-key.yaml", "file containing the authentication map to use when connecting to a Fortigate device"),
-		Listen:        flag.String("listen", ":9710", "address to listen on"),
-		ScrapeTimeout: flag.Int("scrape-timeout", 30, "max seconds to allow a scrape to take"),
-		TLSTimeout:    flag.Int("https-timeout", 10, "TLS Handshake timeout in seconds"),
-		TLSInsecure:   flag.Bool("insecure", false, "Allow insecure certificates"),
-		TlsExtraCAs:   flag.String("extra-ca-certs", "", "comma-separated files containing extra PEMs to trust for TLS connections in addition to the system trust store"),
-		MaxBGPPaths:   flag.Int("max-bgp-paths", 10000, "How many BGP Paths to receive when counting routes, needs to be greater than or equal to the number of routes or metrics will not be generated"),
-		MaxVPNUsers:   flag.Int("max-vpn-users", 0, "How many VPN Users to receive when counting users, needs to be greater than or equal the number of users or metrics will not be generated (0 eq. none by default)"),
+		AuthFile:       flag.String("auth-file", "fortigate-key.yaml", "file containing the authentication map to use when connecting to a Fortigate device"),
+		Listen:         flag.String("listen", ":9710", "address to listen on"),
+		ScrapeTimeout:  flag.Int("scrape-timeout", 30, "max seconds to allow a scrape to take"),
+		TLSTimeout:     flag.Int("https-timeout", 10, "TLS Handshake timeout in seconds"),
+		TLSInsecure:    flag.Bool("insecure", false, "Allow insecure certificates"),
+		TlsExtraCAs:    flag.String("extra-ca-certs", "", "comma-separated files containing extra PEMs to trust for TLS connections in addition to the system trust store"),
+		MaxBGPPaths:    flag.Int("max-bgp-paths", 10000, "How many BGP Paths to receive when counting routes, needs to be greater than or equal to the number of routes or metrics will not be generated"),
+		MaxVPNUsers:    flag.Int("max-vpn-users", 0, "How many VPN Users to receive when counting users, needs to be greater than or equal the number of users or metrics will not be generated (0 eq. none by default)"),
+		AllowedSubnets: flag.String("allowed-subnets", "0.0.0.0", "comma-separated list of allowed ips or subnets. If 0.0.0.0, all IPs are allowed"),
 	}
 
 	savedConfig *FortiExporterConfig
@@ -93,7 +96,7 @@ func ReInit() error {
 	}
 
 	// parse AuthKeys
-	af, err := ioutil.ReadFile(*parameter.AuthFile)
+	af, err := os.ReadFile(*parameter.AuthFile)
 	if err != nil {
 		log.Fatalf("Failed to read API authentication map file: %v", err)
 		return err
@@ -106,13 +109,21 @@ func ReInit() error {
 
 	log.Printf("Loaded %d API keys", len(savedConfig.AuthKeys))
 
+	// parse AllowedSubnets
+	for _, subnet := range strings.Split(*parameter.AllowedSubnets, ",") {
+		if subnet == "" {
+			continue
+		}
+		savedConfig.AllowedSubnets = append(savedConfig.AllowedSubnets, subnet)
+	}
+
 	// parse ExtraCAs
 	for _, eca := range strings.Split(*parameter.TlsExtraCAs, ",") {
 		if eca == "" {
 			continue
 		}
 
-		certs, err := ioutil.ReadFile(eca)
+		certs, err := os.ReadFile(eca)
 		if err != nil {
 			log.Fatalf("Failed to read extra CA file %q: %v", eca, err)
 			return err
