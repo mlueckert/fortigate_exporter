@@ -53,6 +53,7 @@ Global:
    * `fortigate_current_sessions`
  * _System/HAChecksums_
    * `fortigate_ha_member_has_role`
+   * `fortigate_ha_sync_status`
  * _License/Status_
    * `fortigate_license_vdom_usage`
    * `fortigate_license_vdom_max`
