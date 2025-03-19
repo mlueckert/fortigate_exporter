@@ -19,7 +19,7 @@ package http
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -34,7 +34,7 @@ type fakeHTTPClient struct {
 
 func (c *fakeHTTPClient) Do(r *http.Request) (*http.Response, error) {
 	return &http.Response{
-		Body:       ioutil.NopCloser(strings.NewReader(c.body)),
+		Body:       io.NopCloser(strings.NewReader(c.body)),
 		StatusCode: c.status,
 	}, nil
 }
