@@ -63,12 +63,8 @@ func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc
 		Host:   tgt.Host,
 	}
 
-	if target["token"] != "" && savedConfig.AuthKeys[config.Target(target["target"])].Token == "" {
-		// Add the target and its apikey to the savedConfig and use, if exists, a target entry as a template for include/exclude
-		// This will only happend the "first" time
-		savedConfig.AuthKeys[config.Target(target["target"])] = config.TargetAuth{Token: config.Token(target["token"]),
-			Probes: savedConfig.AuthKeys[config.Target(target["profile"])].Probes}
-	}
+	savedConfig.AuthKeys[config.Target(target["target"])] = config.TargetAuth{Token: config.Token(target["token"]),
+		Probes: savedConfig.AuthKeys[config.Target(target["profile"])].Probes}
 
 	c, err := fortiHTTP.NewFortiClient(ctx, u, hc, savedConfig)
 	if err != nil {
