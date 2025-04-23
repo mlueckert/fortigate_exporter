@@ -56,7 +56,6 @@ func ProbeHandler(w http.ResponseWriter, r *http.Request) {
 	probeDurationGauge.Set(duration)
 	if success {
 		probeSuccessGauge.Set(1)
-		log.Printf("Probe of %q succeeded, took %.3f seconds", target, duration)
 	} else {
 		// probeSuccessGauge default is 0
 		log.Printf("Probe of %q failed, took %.3f seconds", target, duration)
