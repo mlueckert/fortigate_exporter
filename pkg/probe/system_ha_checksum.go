@@ -30,7 +30,7 @@ func probeSystemHAChecksum(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 		)
 		SyncStatus = prometheus.NewDesc(
 			"fortigate_ha_sync_status",
-			"HA Sync status",
+			"HA Sync status (0=In sync, 1=Not in sync)",
 			[]string{"serial"}, nil,
 		)
 	)
