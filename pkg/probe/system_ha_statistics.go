@@ -59,6 +59,11 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 			"Amount of time the HA member device has been operating",
 			[]string{"vdom", "hostname"}, nil,
 		)
+		memberPriority = prometheus.NewDesc(
+			"fortigate_ha_member_priority",
+			"Priority of the HA member device",
+			[]string{"vdom", "hostname", "group"}, nil,
+		)
 	)
 
 	type HAResults struct {
@@ -95,8 +100,10 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 
 	type HAConfig struct {
 		Result struct {
-			GroupName string `json:"group-name"`
+			GroupName string  `json:"group-name"`
+			Priority  float64 `json:"priority"`
 		} `json:"results"`
+		Serial string `json:"serial"`
 	}
 	var rc HAConfig
 
@@ -117,6 +124,10 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 		m = append(m, prometheus.MustNewConstMetric(memberCpuUsage, prometheus.GaugeValue, result.CpuUsage/100, r.VDOM, result.Hostname))
 		m = append(m, prometheus.MustNewConstMetric(memberMemoryUsage, prometheus.GaugeValue, result.MemUsage/100, r.VDOM, result.Hostname))
 		m = append(m, prometheus.MustNewConstMetric(memberUptime, prometheus.GaugeValue, result.Tnow, r.VDOM, result.Hostname))
+		// Add the priority metric only to the currently queried member (Master)
+		if result.SerialNo == rc.Serial {
+			m = append(m, prometheus.MustNewConstMetric(memberPriority, prometheus.GaugeValue, rc.Result.Priority, r.VDOM, result.Hostname, rc.Result.GroupName))
+		}
 	}
 	return m, true
 }
