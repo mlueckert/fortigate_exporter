@@ -1,3 +1,22 @@
+# fortigate_exporter
+
+![Go](https://github.com/mlueckert/fortigate_exporter/workflows/Go/badge.svg)
+
+Prometheus exporter for FortiGate® firewalls.
+
+**NOTE:** This is not an official Fortinet product, it is developed fully independently by professionals and hobbyists alike. It is used in a production environment with about 100+ Fortigate firewalls, so I try hard to keep it stable and working, but there is no guarantee that it will work for you. If you find a bug, please open an issue.
+
+  * [Supported Metrics](#supported-metrics)
+  * [Usage](#usage)
+    + [Dynamic configuration](#dynamic-configuration)
+    + [Available CLI parameters](#available-cli-parameters)
+    + [Fortigate Configuration](#fortigate-configuration)
+    + [Prometheus Configuration](#prometheus-configuration)
+    + [Docker](#docker)
+      - [docker-compose](#docker-compose)
+  * [Known Issues](#known-issues)
+  * [Missing Metrics?](#missing-metrics)
+
 # Forking information
 
 I have forked this repository to add some features and fix some bugs that are important in our environment.
@@ -10,26 +29,6 @@ build new images by adding version tags:
 git tag v1.0.0 
 git push origin v1.0.0
 ```
-
-# fortigate_exporter
-
-![Go](https://github.com/mlueckert/fortigate_exporter/workflows/Go/badge.svg)
-![Docker](https://github.com/mlueckert/fortigate_exporter/workflows/Docker/badge.svg)
-
-Prometheus exporter for FortiGate® firewalls.
-
-**NOTE:** This is not an official Fortinet product, it is developed fully independently by professionals and hobbyists alike.
-
-  * [Supported Metrics](#supported-metrics)
-  * [Usage](#usage)
-    + [Dynamic configuration](#dynamic-configuration)
-    + [Available CLI parameters](#available-cli-parameters)
-    + [Fortigate Configuration](#fortigate-configuration)
-    + [Prometheus Configuration](#prometheus-configuration)
-    + [Docker](#docker)
-      - [docker-compose](#docker-compose)
-  * [Known Issues](#known-issues)
-  * [Missing Metrics?](#missing-metrics)
 
 ## Supported Metrics
 
