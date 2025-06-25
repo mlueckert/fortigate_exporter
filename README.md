@@ -1,3 +1,7 @@
+# Forking information
+
+I have forked this repository to add some features and fix some bugs that are important in our environment.
+
 # CMCS info
 
 build new images by adding version tags:
@@ -9,9 +13,8 @@ git push origin v1.0.0
 
 # fortigate_exporter
 
-![Go](https://github.com/bluecmd/fortigate_exporter/workflows/Go/badge.svg)
-![Docker](https://github.com/bluecmd/fortigate_exporter/workflows/Docker/badge.svg)
-[![Docker Repository on Quay](https://quay.io/repository/bluecmd/fortigate_exporter/status "Docker Repository on Quay")](https://quay.io/repository/bluecmd/fortigate_exporter)
+![Go](https://github.com/mlueckert/fortigate_exporter/workflows/Go/badge.svg)
+![Docker](https://github.com/mlueckert/fortigate_exporter/workflows/Docker/badge.svg)
 
 Prometheus exporter for FortiGate® firewalls.
 
