@@ -72,7 +72,7 @@ func probeSystemInterface(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.
 	}
 	var r []ifResponse
 
-	if err := c.Get("api/v2/monitor/system/interface/select", "vdom=*&include_vlan=true&include_aggregate=true", &r); err != nil {
+	if err := c.Get("api/v2/monitor/system/interface", "vdom=*&include_vlan=true&include_aggregate=true", &r); err != nil {
 		log.Printf("Error: %v", err)
 		return nil, false
 	}
