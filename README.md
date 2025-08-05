@@ -164,6 +164,11 @@ Per-VDOM:
    * `fortigate_virtual_wan_bandwidth_rx_byte_per_second`
    * `fortigate_virtual_wan_status_change_time_seconds`
 
+ * _VirtualWAN/Members_
+   * `fortigate_virtual_wan_member_up`
+   * `fortigate_virtual_wan_member_receive_bytes_total`
+   * `fortigate_virtual_wan_member_transmit_bytes_total`
+
  Per-BGP-Neighbor and VDOM:
  * _BGP/Neighbors/IPv4_
    * `fortigate_bgp_neighbor_ipv4_info`
@@ -435,10 +440,12 @@ To improve security, limit permissions to required ones only (least privilege pr
 |VPN/Ssl/Connections          | vpngrp             |api/v2/monitor/vpn/ssl |
 |VPN/Ssl/Stats                | vpngrp             |api/v2/monitor/vpn/ssl/stats |
 |VirtualWAN/HealthCheck       | netgrp.cfg         |api/v2/monitor/virtual-wan/health-check |
+|VirtualWAN/Members           | netgrp.cfg         |api/v2/monitor/virtual-wan/members |
 |Wifi/APStatus                | wifi               |api/v2/monitor/wifi/ap_status |
 |Wifi/Clients                 | wifi               |api/v2/monitor/wifi/client |
 |Wifi/ManagedAP               | wifi               |api/v2/monitor/wifi/managed_ap |
 |Switch/ManagedSwitch         | switch	           |api/v2/monitor/switch-controller/managed-switch|
+
 If you omit to grant some of these permissions you will receive log messages warning about
 403 errors and relevant metrics will be unavailable, but other metrics will still work.
 If you do not need some probes to be run, do not grant permission for them and use `include/exclude` feature (see `Usage` section).
