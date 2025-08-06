@@ -18,12 +18,12 @@ func probeVPNIPSec(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metric,
 		transmitted = prometheus.NewDesc(
 			"fortigate_ipsec_tunnel_transmit_bytes_total",
 			"Total number of bytes transmitted over the IPsec tunnel",
-			[]string{"vdom", "name", "p2serial", "parent", "type"}, nil,
+			[]string{"vdom", "name", "username", "p2serial", "parent", "type"}, nil,
 		)
 		received = prometheus.NewDesc(
 			"fortigate_ipsec_tunnel_receive_bytes_total",
 			"Total number of bytes received over the IPsec tunnel",
-			[]string{"vdom", "name", "p2serial", "parent", "type"}, nil,
+			[]string{"vdom", "name", "username", "p2serial", "parent", "type"}, nil,
 		)
 	)
 
@@ -59,8 +59,8 @@ func probeVPNIPSec(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metric,
 					s = 1.0
 				}
 				m = append(m, prometheus.MustNewConstMetric(status, prometheus.GaugeValue, s, v.VDOM, t.Name, i.Username, strconv.Itoa(t.P2serial), i.Name, i.Type))
-				m = append(m, prometheus.MustNewConstMetric(transmitted, prometheus.CounterValue, t.Outgoing, v.VDOM, t.Name, strconv.Itoa(t.P2serial), i.Name, i.Type))
-				m = append(m, prometheus.MustNewConstMetric(received, prometheus.CounterValue, t.Incoming, v.VDOM, t.Name, strconv.Itoa(t.P2serial), i.Name, i.Type))
+				m = append(m, prometheus.MustNewConstMetric(transmitted, prometheus.CounterValue, t.Outgoing, v.VDOM, t.Name, i.Username, strconv.Itoa(t.P2serial), i.Name, i.Type))
+				m = append(m, prometheus.MustNewConstMetric(received, prometheus.CounterValue, t.Incoming, v.VDOM, t.Name, i.Username, strconv.Itoa(t.P2serial), i.Name, i.Type))
 			}
 		}
 	}
