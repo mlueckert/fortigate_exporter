@@ -13,7 +13,7 @@ func probeVPNIPSec(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metric,
 		status = prometheus.NewDesc(
 			"fortigate_ipsec_tunnel_up",
 			"Status of IPsec tunnel (0 - Down, 1 - Up)",
-			[]string{"vdom", "name", "p2serial", "parent", "type"}, nil,
+			[]string{"vdom", "name", "username", "p2serial", "parent", "type"}, nil,
 		)
 		transmitted = prometheus.NewDesc(
 			"fortigate_ipsec_tunnel_transmit_bytes_total",
@@ -35,9 +35,10 @@ func probeVPNIPSec(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metric,
 		Outgoing float64 `json:"outgoing_bytes"`
 	}
 	type tunnel struct {
-		Name    string    `json:"name"`
-		Type    string    `json:"type"`
-		ProxyID []proxyid `json:"proxyid"`
+		Name     string    `json:"name"`
+		Type     string    `json:"type"`
+		ProxyID  []proxyid `json:"proxyid"`
+		Username string    `json:"username"`
 	}
 	type ipsecResult struct {
 		Results []tunnel `json:"results"`
@@ -57,7 +58,7 @@ func probeVPNIPSec(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metric,
 				if t.Status == "up" {
 					s = 1.0
 				}
-				m = append(m, prometheus.MustNewConstMetric(status, prometheus.GaugeValue, s, v.VDOM, t.Name, strconv.Itoa(t.P2serial), i.Name, i.Type))
+				m = append(m, prometheus.MustNewConstMetric(status, prometheus.GaugeValue, s, v.VDOM, t.Name, i.Username, strconv.Itoa(t.P2serial), i.Name, i.Type))
 				m = append(m, prometheus.MustNewConstMetric(transmitted, prometheus.CounterValue, t.Outgoing, v.VDOM, t.Name, strconv.Itoa(t.P2serial), i.Name, i.Type))
 				m = append(m, prometheus.MustNewConstMetric(received, prometheus.CounterValue, t.Incoming, v.VDOM, t.Name, strconv.Itoa(t.P2serial), i.Name, i.Type))
 			}

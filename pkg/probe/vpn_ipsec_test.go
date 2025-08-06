@@ -19,16 +19,22 @@ func TestVPNIPSec(t *testing.T) {
 	em := `
 	# HELP fortigate_ipsec_tunnel_receive_bytes_total Total number of bytes received over the IPsec tunnel
 	# TYPE fortigate_ipsec_tunnel_receive_bytes_total counter
+	fortigate_ipsec_tunnel_receive_bytes_total{name="H-DC00_ISP1",p2serial="1",parent="H-DC00_ISP1_f",type="dialup",vdom="root"} 13895
+    fortigate_ipsec_tunnel_receive_bytes_total{name="H-DC00_ISP1",p2serial="2",parent="H-DC00_ISP1_f",type="dialup",vdom="root"} 18961
 	fortigate_ipsec_tunnel_receive_bytes_total{name="tunnel_1-sub",p2serial="1",parent="tunnel_1",type="automatic",vdom="root"} 1.429824e+07
 	fortigate_ipsec_tunnel_receive_bytes_total{name="tunnel_1-sub",p2serial="12",parent="tunnel_1",type="automatic",vdom="root"} 1.429824e+07
 	# HELP fortigate_ipsec_tunnel_transmit_bytes_total Total number of bytes transmitted over the IPsec tunnel
 	# TYPE fortigate_ipsec_tunnel_transmit_bytes_total counter
+    fortigate_ipsec_tunnel_transmit_bytes_total{name="H-DC00_ISP1",p2serial="1",parent="H-DC00_ISP1_f",type="dialup",vdom="root"} 38380
+    fortigate_ipsec_tunnel_transmit_bytes_total{name="H-DC00_ISP1",p2serial="2",parent="H-DC00_ISP1_f",type="dialup",vdom="root"} 37172
 	fortigate_ipsec_tunnel_transmit_bytes_total{name="tunnel_1-sub",p2serial="1",parent="tunnel_1",type="automatic",vdom="root"} 1.424856e+07
 	fortigate_ipsec_tunnel_transmit_bytes_total{name="tunnel_1-sub",p2serial="12",parent="tunnel_1",type="automatic",vdom="root"} 1.424856e+07
 	# HELP fortigate_ipsec_tunnel_up Status of IPsec tunnel (0 - Down, 1 - Up)
 	# TYPE fortigate_ipsec_tunnel_up gauge
-	fortigate_ipsec_tunnel_up{name="tunnel_1-sub",p2serial="1",parent="tunnel_1",type="automatic",vdom="root"} 1
-	fortigate_ipsec_tunnel_up{name="tunnel_1-sub",p2serial="12",parent="tunnel_1",type="automatic",vdom="root"} 0
+    fortigate_ipsec_tunnel_up{name="H-DC00_ISP1",p2serial="1",parent="H-DC00_ISP1_f",type="dialup",username="fwname_ISP1",vdom="root"} 1
+    fortigate_ipsec_tunnel_up{name="H-DC00_ISP1",p2serial="2",parent="H-DC00_ISP1_f",type="dialup",username="fwname_ISP1",vdom="root"} 1
+	fortigate_ipsec_tunnel_up{name="tunnel_1-sub",p2serial="1",parent="tunnel_1",type="automatic",username="",vdom="root"} 1
+	fortigate_ipsec_tunnel_up{name="tunnel_1-sub",p2serial="12",parent="tunnel_1",type="automatic",username="",vdom="root"} 0
 
 	`
 
@@ -64,12 +70,12 @@ func TestVPNIPSecWithCommonP2Names(t *testing.T) {
 	fortigate_ipsec_tunnel_transmit_bytes_total{name="some-network",p2serial="14",parent="My VPN",type="automatic",vdom="root"} 112307
 	# HELP fortigate_ipsec_tunnel_up Status of IPsec tunnel (0 - Down, 1 - Up)
 	# TYPE fortigate_ipsec_tunnel_up gauge
-	fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="22",parent="My VPN",type="automatic",vdom="root"} 0
-	fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="23",parent="My VPN",type="automatic",vdom="root"} 1
-	fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="24",parent="My VPN",type="automatic",vdom="root"} 1
-	fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="25",parent="My VPN",type="automatic",vdom="root"} 1
-	fortigate_ipsec_tunnel_up{name="mgmt",p2serial="1",parent="My VPN",type="automatic",vdom="root"} 0
-	fortigate_ipsec_tunnel_up{name="some-network",p2serial="14",parent="My VPN",type="automatic",vdom="root"} 1
+    fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="22",parent="My VPN",type="automatic",username="",vdom="root"} 0
+    fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="23",parent="My VPN",type="automatic",username="",vdom="root"} 1
+    fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="24",parent="My VPN",type="automatic",username="",vdom="root"} 1
+    fortigate_ipsec_tunnel_up{name="CommonP2",p2serial="25",parent="My VPN",type="automatic",username="",vdom="root"} 1
+    fortigate_ipsec_tunnel_up{name="mgmt",p2serial="1",parent="My VPN",type="automatic",username="",vdom="root"} 0
+    fortigate_ipsec_tunnel_up{name="some-network",p2serial="14",parent="My VPN",type="automatic",username="",vdom="root"} 1
 	`
 
 	if err := testutil.GatherAndCompare(r, strings.NewReader(em)); err != nil {
