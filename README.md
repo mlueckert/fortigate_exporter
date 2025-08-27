@@ -82,6 +82,8 @@ Per-VDOM:
    * `fortigate_ippool_used_items`
    * `fortigate_ippool_total_items`
    * `fortigate_ippool_pba_per_ip`
+ * _Firewall/UserCount_
+   * `fortigate_fw_user_count`
  * _System/Fortimanager/Status_
    * `fortigate_fortimanager_connection_status`
    * `fortigate_fortimanager_registration_status`
@@ -420,6 +422,7 @@ To improve security, limit permissions to required ones only (least privilege pr
 |Firewall/IpPool              | fwgrp.policy       |api/v2/monitor/firewall/ippool |
 |Firewall/LoadBalance         | fwgrp.others       |api/v2/monitor/firewall/load-balance |
 |Firewall/Policies            | fwgrp.policy       |api/v2/monitor/firewall/policy/select<br>api/v2/monitor/firewall/policy6/select<br>api/v2/cmdb/firewall/policy<br>api/v2/cmdb/firewall/policy6 |
+|Firewall/UserCount           | authgrp            |api/v2/monitor/user/firewall/count |
 |IPv4/Routes                  | netgrp.route-cfg   |api/v2/monitor/router/ipv4 |
 |License/Status               | *any*              |api/v2/monitor/license/status/select |
 |Log/Fortianalyzer/Status     | loggrp.config      |api/v2/monitor/log/fortianalyzer |

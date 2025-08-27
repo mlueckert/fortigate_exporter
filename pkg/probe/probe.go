@@ -119,6 +119,7 @@ func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc
 		{"Firewall/LoadBalance", probeFirewallLoadBalance},
 		{"Firewall/Policies", probeFirewallPolicies},
 		{"Firewall/IpPool", probeFirewallIpPool},
+		{"Firewall/UserCount", probeFirewallUserCount},
 		{"License/Status", probeLicenseStatus},
 		{"Log/Fortianalyzer/Status", probeLogAnalyzer},
 		{"Log/Fortianalyzer/Queue", probeLogAnalyzerQueue},
