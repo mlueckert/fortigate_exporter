@@ -141,6 +141,7 @@ func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc
 		{"VPN/Ssl/Stats", probeVPNSslStats},
 		{"VirtualWAN/HealthCheck", probeVirtualWANHealthCheck},
 		{"VirtualWAN/Members", probeVirtualWANMembers},
+		{"VirtualWAN/SLA", probeVirtualWANSLA},
 		{"WebUI/State", probeWebUIState},
 		{"Wifi/APStatus", probeWifiAPStatus},
 		{"Wifi/Clients", probeWifiClients},

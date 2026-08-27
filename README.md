@@ -171,6 +171,12 @@ Per-VDOM:
    * `fortigate_virtual_wan_member_receive_bytes_total`
    * `fortigate_virtual_wan_member_transmit_bytes_total`
 
+ * _VirtualWAN/SLA_
+   * `fortigate_virtual_wan_sla_jitter` (labeled by test_name and interface)
+   * `fortigate_virtual_wan_sla_packetloss_ratio` (labeled by test_name and interface, ratio 0-1)
+   * `fortigate_virtual_wan_sla_latency` (labeled by test_name and interface)
+   * `fortigate_virtual_wan_sla_link_status` (labeled by test_name, interface, and link)
+
  Per-BGP-Neighbor and VDOM:
  * _BGP/Neighbors/IPv4_
    * `fortigate_bgp_neighbor_ipv4_info`
@@ -444,6 +450,7 @@ To improve security, limit permissions to required ones only (least privilege pr
 |VPN/Ssl/Stats                | vpngrp             |api/v2/monitor/vpn/ssl/stats |
 |VirtualWAN/HealthCheck       | netgrp.cfg         |api/v2/monitor/virtual-wan/health-check |
 |VirtualWAN/Members           | netgrp.cfg         |api/v2/monitor/virtual-wan/members |
+|VirtualWAN/SLA               | netgrp.cfg         |api/v2/monitor/virtual-wan/sla-log |
 |Wifi/APStatus                | wifi               |api/v2/monitor/wifi/ap_status |
 |Wifi/Clients                 | wifi               |api/v2/monitor/wifi/client |
 |Wifi/ManagedAP               | wifi               |api/v2/monitor/wifi/managed_ap |
