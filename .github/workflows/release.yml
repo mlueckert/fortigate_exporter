@@ -41,9 +41,7 @@ jobs:
 
         # Prepare release
       - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 21
+        uses: actions/setup-node@v7
       - name: Add execution plugin
         run: npm install @semantic-release/exec
       - name: Release to GitHub
