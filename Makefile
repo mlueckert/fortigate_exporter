@@ -1,5 +1,6 @@
 VERSION := $(shell git describe --tags)
 GIT_HASH := $(shell git rev-parse --short HEAD )
+GOIMPORTS := golang.org/x/tools/cmd/goimports@latest
 
 GO_VERSION        ?= $(shell go version)
 GO_VERSION_NUMBER ?= $(word 3, $(GO_VERSION))
@@ -54,11 +55,15 @@ test-output:
 
 .PHONY: fmt-fix
 fmt-fix:
-	@go mod download golang.org/x/tools
-	@go run golang.org/x/tools/cmd/goimports -w -l .
+	@go run $(GOIMPORTS) -w -l .
 
 .PHONY: fmt-check
 fmt-check:
 	@printf "Check formatting... \n"
-	@go mod download golang.org/x/tools
-	@if [[ $$( go run golang.org/x/tools/cmd/goimports -l . ) ]]; then printf "Files not properly formatted. Run 'make fmt-fix' \n"; exit 1; else printf "Check formatting finished \n"; fi
+	@FILES="$$(go run $(GOIMPORTS) -l .)"; \
+	if [ -n "$$FILES" ]; then \
+		printf "Files not properly formatted. Run 'make fmt-fix' \n%s\n" "$$FILES"; \
+		exit 1; \
+	else \
+		printf "Check formatting finished \n"; \
+	fi
