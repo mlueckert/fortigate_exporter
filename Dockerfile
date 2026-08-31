@@ -3,9 +3,16 @@ FROM golang:1.27 as builder
 
 WORKDIR /build
 
+ARG VERSION
+ARG GIT_HASH
+
 COPY . .
 RUN go get -v -t -d ./...
-RUN make build
+RUN if [ -n "${VERSION}" ] || [ -n "${GIT_HASH}" ]; then \
+      make build VERSION="${VERSION}" GIT_HASH="${GIT_HASH}"; \
+    else \
+      make build; \
+    fi
 
 FROM scratch
 WORKDIR /opt/fortigate_exporter
