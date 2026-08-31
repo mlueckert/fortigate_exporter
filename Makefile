@@ -1,5 +1,5 @@
-VERSION := $(shell git describe --tags)
-GIT_HASH := $(shell git rev-parse --short HEAD )
+VERSION ?= $(shell git describe --tags --always --dirty)
+GIT_HASH ?= $(shell git rev-parse --short HEAD )
 GOIMPORTS := golang.org/x/tools/cmd/goimports@latest
 
 GO_VERSION        ?= $(shell go version)
