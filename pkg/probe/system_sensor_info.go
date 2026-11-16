@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -38,7 +36,7 @@ func probeSystemSensorInfo(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 
 	var res SystemSensorInfo
 	if err := c.Get("api/v2/monitor/system/sensor-info", "vdom=root", &res); err != nil {
-		log.Printf("Warning: %v", err)
+		meta.logf("Warning: %v", err)
 		return nil, false
 	}
 

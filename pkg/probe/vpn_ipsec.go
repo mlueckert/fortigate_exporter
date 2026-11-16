@@ -1,7 +1,6 @@
 package probe
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -46,7 +45,7 @@ func probeVPNIPSec(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metric,
 	}
 	var res []ipsecResult
 	if err := c.Get("api/v2/monitor/vpn/ipsec", "vdom=*", &res); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

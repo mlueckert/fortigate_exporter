@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -79,7 +77,7 @@ func probeFirewallIpPool(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.M
 	var rs []IpPoolResponse
 
 	if err := c.Get("api/v2/monitor/firewall/ippool", "vdom=*", &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

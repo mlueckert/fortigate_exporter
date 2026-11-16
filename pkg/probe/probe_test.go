@@ -18,11 +18,18 @@
 package probe
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
+	"strings"
+	"testing"
 
-	"github.com/bluecmd/fortigate_exporter/pkg/http"
+	"github.com/bluecmd/fortigate_exporter/internal/config"
+	fortiHTTP "github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/google/go-jsonnet"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -91,7 +98,7 @@ func (p *testProbeCollector) Collect(c chan<- prometheus.Metric) {
 func (p *testProbeCollector) Describe(c chan<- *prometheus.Desc) {
 }
 
-func testProbe(pf probeFunc, c http.FortiHTTP, r Registry) bool {
+func testProbe(pf probeFunc, c fortiHTTP.FortiHTTP, r Registry) bool {
 	meta := &TargetMetadata{
 		VersionMajor: 7,
 		VersionMinor: 0,
@@ -99,7 +106,7 @@ func testProbe(pf probeFunc, c http.FortiHTTP, r Registry) bool {
 	return testProbeWithMetadata(pf, c, meta, r)
 }
 
-func testProbeWithMetadata(pf probeFunc, c http.FortiHTTP, meta *TargetMetadata, r Registry) bool {
+func testProbeWithMetadata(pf probeFunc, c fortiHTTP.FortiHTTP, meta *TargetMetadata, r Registry) bool {
 	m, ok := pf(c, meta)
 	if !ok {
 		return false
@@ -111,4 +118,60 @@ func testProbeWithMetadata(pf probeFunc, c http.FortiHTTP, meta *TargetMetadata,
 
 func newFakeClient() *fakeClient {
 	return &fakeClient{data: map[string][]preparedResp{}}
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
+
+func TestProbeLogsTargetHostname(t *testing.T) {
+	for _, tt := range []struct {
+		name        string
+		statusCode  int
+		statusBody  string
+		membersCode int
+		membersBody string
+		wantLog     string
+	}{
+		{"connectivity failure", 500, "", 200, "", "API connectivity test failed"},
+		{"unsuccessful status", 200, `{"status":"error"}`, 200, "", "API connectivity test returned status"},
+		{"invalid version", 200, `{"status":"success","version":"invalid"}`, 200, "", "Failed to parse OS version"},
+		{"member request failure", 200, `{"status":"success","version":"v7.4.0"}`, 500, "", "response code was 500"},
+		{"invalid members", 200, `{"status":"success","version":"v7.4.0"}`, 200, `[{"results":[{}]}]`, "has no interface"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			var logs bytes.Buffer
+			original := log.Writer()
+			log.SetOutput(&logs)
+			defer log.SetOutput(original)
+
+			hc := &http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
+				code, body := tt.membersCode, tt.membersBody
+				if req.URL.Path == "/api/v2/monitor/system/status" {
+					code, body = tt.statusCode, tt.statusBody
+				}
+
+				return &http.Response{StatusCode: code, Body: io.NopCloser(strings.NewReader(body)), Header: make(http.Header)}, nil
+			})}
+			const target = "https://firewall.example:8443"
+			cfg := config.FortiExporterConfig{AuthKeys: config.AuthKeys{
+				"profile": {Probes: config.Probes{Include: config.ProbeList{"VirtualWAN/Members"}}},
+			}}
+			collector := &ProbeCollector{}
+			ok, err := collector.Probe(context.Background(), map[string]string{
+				"target": target, "token": "test-token", "profile": "profile",
+			}, hc, cfg)
+			if err != nil || ok {
+				t.Fatalf("Probe() = %v, %v; want failure without request error", ok, err)
+			}
+			if !strings.Contains(logs.String(), `target="firewall.example"`) || !strings.Contains(logs.String(), tt.wantLog) {
+				t.Errorf("log = %q; want target hostname and %q", logs.String(), tt.wantLog)
+			}
+			if strings.Contains(logs.String(), "test-token") {
+				t.Errorf("log contains token: %q", logs.String())
+			}
+		})
+	}
 }

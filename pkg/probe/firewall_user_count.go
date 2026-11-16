@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -26,7 +24,7 @@ func probeFirewallUserCount(c http.FortiHTTP, meta *TargetMetadata) ([]prometheu
 
 	var res []UserCount
 	if err := c.Get("api/v2/monitor/user/firewall/count", "vdom=*", &res); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

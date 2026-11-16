@@ -2,7 +2,6 @@ package probe
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/bluecmd/fortigate_exporter/internal/config"
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -53,7 +52,7 @@ func probeBGPNeighborPathsIPv4(c http.FortiHTTP, meta *TargetMetadata) ([]promet
 	var rs []BGPPaths
 
 	if err := c.Get("api/v2/monitor/router/bgp/paths", fmt.Sprintf("vdom=*&count=%d", MaxBGPPaths), &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -64,7 +63,7 @@ func probeBGPNeighborPathsIPv4(c http.FortiHTTP, meta *TargetMetadata) ([]promet
 	for _, r := range rs {
 
 		if len(r.Results) > MaxBGPPaths {
-			log.Printf("Error: Received more BGP Paths than maximum (%d > %d) allowed, ignoring metric ...", len(r.Results), MaxBGPPaths)
+			meta.logf("Error: Received more BGP Paths than maximum (%d > %d) allowed, ignoring metric ...", len(r.Results), MaxBGPPaths)
 			return nil, false
 		}
 		for _, route := range r.Results {
@@ -121,7 +120,7 @@ func probeBGPNeighborPathsIPv6(c http.FortiHTTP, meta *TargetMetadata) ([]promet
 	var rs []BGPPaths
 
 	if err := c.Get("api/v2/monitor/router/bgp/paths6", fmt.Sprintf("vdom=*&count=%d", MaxBGPPaths), &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -132,7 +131,7 @@ func probeBGPNeighborPathsIPv6(c http.FortiHTTP, meta *TargetMetadata) ([]promet
 	for _, r := range rs {
 
 		if len(r.Results) > MaxBGPPaths {
-			log.Printf("Error: Received more BGP Paths than maximum (%d > %d) allowed, ignoring metric ...", len(r.Results), MaxBGPPaths)
+			meta.logf("Error: Received more BGP Paths than maximum (%d > %d) allowed, ignoring metric ...", len(r.Results), MaxBGPPaths)
 			return nil, false
 		}
 		for _, route := range r.Results {

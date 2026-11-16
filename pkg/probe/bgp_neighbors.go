@@ -38,7 +38,7 @@ func probeBGPNeighborsIPv4(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 	var rs []BGPNeighborResponse
 
 	if err := c.Get("api/v2/monitor/router/bgp/neighbors", "vdom=*", &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -70,7 +70,7 @@ func probeBGPNeighborsIPv6(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 	var rs []BGPNeighborResponse
 
 	if err := c.Get("api/v2/monitor/router/bgp/neighbors6", "vdom=*", &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

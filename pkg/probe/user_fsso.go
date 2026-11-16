@@ -1,7 +1,6 @@
 package probe
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -31,7 +30,7 @@ func probeUserFsso(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metric,
 
 	var res []UserFsso
 	if err := c.Get("api/v2/monitor/user/fsso", "vdom=*", &res); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

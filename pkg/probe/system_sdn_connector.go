@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -36,7 +34,7 @@ func probeSystemSDNConnector(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 
 	var res []SystemSDNConnector
 	if err := c.Get("api/v2/monitor/system/sdn-connector/status", "vdom=*", &res); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

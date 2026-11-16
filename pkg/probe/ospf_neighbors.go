@@ -1,7 +1,6 @@
 package probe
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -37,7 +36,7 @@ func probeOSPFNeighbors(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Me
 	var rs []OSPFNeighborResponse
 
 	if err := c.Get("api/v2/monitor/router/ospf/neighbors", "vdom=*", &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

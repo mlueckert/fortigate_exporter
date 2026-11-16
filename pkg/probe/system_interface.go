@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -73,7 +71,7 @@ func probeSystemInterface(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.
 	var r []ifResponse
 
 	if err := c.Get("api/v2/monitor/system/interface", "vdom=*&include_vlan=true&include_aggregate=true", &r); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 	m := []prometheus.Metric{}

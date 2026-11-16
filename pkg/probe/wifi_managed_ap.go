@@ -1,7 +1,6 @@
 package probe
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -196,7 +195,7 @@ func probeWifiManagedAP(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Me
 	// Consider implementing pagination to remove this limit of 1000 entries
 	var response managedAPResponse
 	if err := c.Get("api/v2/monitor/wifi/managed_ap", "vdom=*&start=0&count=1000", &response); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

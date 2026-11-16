@@ -18,8 +18,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
@@ -90,7 +88,7 @@ func probeVirtualWANSLA(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Me
 	var r []slaResponse
 
 	if err := c.Get("api/v2/monitor/virtual-wan/sla-log", "vdom=*", &r); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

@@ -290,6 +290,8 @@ Per-VDOM, managed switch and interface:
     
 ## Usage
 
+Probe error and warning logs include the hostname or IP address from the scrape target as `target="..."`. This identifies the configured target, not necessarily the FortiGate's device hostname.
+
 Example:
 
 ```
@@ -378,6 +380,8 @@ curl 'localhost:9710/probe?target=https://192.168.2.31&token=ghi6eItWzWewgbrFMsa
 ```
 It is also possible to pass a `profile` query parameter. The value will match an entry in the `fortigate-key.yaml` 
 file, but only to use the `probes` section for include/exclude directives.
+
+Dynamic tokens and profile selections are scoped to each scrape; concurrent scrapes do not modify the configured authentication map.
 
 Example:
 ```bash
