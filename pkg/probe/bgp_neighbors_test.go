@@ -1,12 +1,36 @@
 package probe
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/testutil"
 )
+
+func TestBGPNeighborRemoteAS(t *testing.T) {
+	for _, tt := range []struct {
+		name    string
+		input   string
+		wantErr bool
+	}{
+		{"number", `{"remote_as":12312}`, false},
+		{"string", `{"remote_as":"12312"}`, false},
+		{"invalid", `{"remote_as":"not-a-number"}`, true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			var neighbor BGPNeighbor
+			err := json.Unmarshal([]byte(tt.input), &neighbor)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("Unmarshal() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !tt.wantErr && neighbor.RemoteAS.String() != "12312" {
+				t.Errorf("RemoteAS = %q, want %q", neighbor.RemoteAS, "12312")
+			}
+		})
+	}
+}
 
 func TestBGPNeighborsIPv4(t *testing.T) {
 	c := newFakeClient()

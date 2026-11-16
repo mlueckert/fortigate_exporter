@@ -6,7 +6,7 @@
       {
         "neighbor_ip":"fd00::2",
         "local_ip":"fd00::1",
-        "remote_as":1337,
+        "remote_as":"1337",
         "admin_status":true,
         "state":"Established",
         "type":"ipv6"
