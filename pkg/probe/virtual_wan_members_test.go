@@ -19,16 +19,25 @@ func TestVirtualWANMembers(t *testing.T) {
 	em := `
 		# HELP fortigate_virtual_wan_member_receive_bytes_total Number of bytes received on the interface
 		# TYPE fortigate_virtual_wan_member_receive_bytes_total counter
-		fortigate_virtual_wan_member_receive_bytes_total{name="EMAC_peri_680"} 1.442313770232e+12
-		fortigate_virtual_wan_member_receive_bytes_total{name="H-ABCD_ISP1"} 9.66618808307e+11
+		fortigate_virtual_wan_member_receive_bytes_total{name="AZvWAN_VPNGW1"} 1.468034495e+09
+		fortigate_virtual_wan_member_receive_bytes_total{name="AZvWAN_VPNGW2"} 9.76209652e+08
+		fortigate_virtual_wan_member_receive_bytes_total{name="EMAC_guest_680"} 1.837203840668e+12
+		fortigate_virtual_wan_member_receive_bytes_total{name="EMAC_peri_680"} 7.201799146898e+12
+		fortigate_virtual_wan_member_receive_bytes_total{name="H-DC00_ISP1"} 1.050317097364e+12
 		# HELP fortigate_virtual_wan_member_transmit_bytes_total Number of bytes transmitted on the interface
 		# TYPE fortigate_virtual_wan_member_transmit_bytes_total counter
-		fortigate_virtual_wan_member_transmit_bytes_total{name="EMAC_peri_680"} 6.426696498218e+12
-		fortigate_virtual_wan_member_transmit_bytes_total{name="H-ABCD_ISP1"} 5.848688522671e+12
+		fortigate_virtual_wan_member_transmit_bytes_total{name="AZvWAN_VPNGW1"} 3.94906227e+08
+        fortigate_virtual_wan_member_transmit_bytes_total{name="AZvWAN_VPNGW2"} 4.32951598e+08
+        fortigate_virtual_wan_member_transmit_bytes_total{name="EMAC_guest_680"} 7.1184759497e+11
+        fortigate_virtual_wan_member_transmit_bytes_total{name="EMAC_peri_680"} 1.1719487983535e+13
+        fortigate_virtual_wan_member_transmit_bytes_total{name="H-DC00_ISP1"} 8.264470309826e+12
 		# HELP fortigate_virtual_wan_member_up Whether the link is up (value 1) or not (not taking into account admin status)
 		# TYPE fortigate_virtual_wan_member_up gauge
-		fortigate_virtual_wan_member_up{name="EMAC_peri_680"} 1
-		fortigate_virtual_wan_member_up{name="H-ABCD_ISP1"} 1
+        fortigate_virtual_wan_member_up{name="AZvWAN_VPNGW1"} 1
+        fortigate_virtual_wan_member_up{name="AZvWAN_VPNGW2"} 1
+        fortigate_virtual_wan_member_up{name="EMAC_guest_680"} 1
+        fortigate_virtual_wan_member_up{name="EMAC_peri_680"} 1
+        fortigate_virtual_wan_member_up{name="H-DC00_ISP1"} 1
 	`
 	if err := testutil.GatherAndCompare(r, strings.NewReader(em)); err != nil {
 		t.Fatalf("metric compare: err %v", err)
