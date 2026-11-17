@@ -36,8 +36,13 @@ type ProbeCollector struct {
 }
 
 type TargetMetadata struct {
+	Hostname     string
 	VersionMajor int
 	VersionMinor int
+}
+
+func (meta *TargetMetadata) logf(format string, args ...any) {
+	log.Printf("target=%q %s", meta.Hostname, fmt.Sprintf(format, args...))
 }
 
 type probeFunc func(fortiHTTP.FortiHTTP, *TargetMetadata) ([]prometheus.Metric, bool)
@@ -62,9 +67,13 @@ func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc
 		Scheme: tgt.Scheme,
 		Host:   tgt.Host,
 	}
+	meta := &TargetMetadata{Hostname: tgt.Hostname()}
 
-	savedConfig.AuthKeys[config.Target(target["target"])] = config.TargetAuth{Token: config.Token(target["token"]),
-		Probes: savedConfig.AuthKeys[config.Target(target["profile"])].Probes}
+	auth := config.TargetAuth{
+		Token:  config.Token(target["token"]),
+		Probes: savedConfig.AuthKeys[config.Target(target["profile"])].Probes,
+	}
+	savedConfig.AuthKeys = config.AuthKeys{config.Target(u.String()): auth}
 
 	c, err := fortiHTTP.NewFortiClient(ctx, u, hc, savedConfig)
 	if err != nil {
@@ -81,28 +90,26 @@ func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc
 	// The "system status" group has access group "any" so it is a good source
 	// to test the authentication as well as fetching the OS version.
 	if err := c.Get("api/v2/monitor/system/status", "", &st); err != nil {
-		log.Printf("Error: API connectivity test failed, %v", err)
+		meta.logf("Error: API connectivity test failed, %v", err)
 		return false, nil
 	}
 
 	if st.Status != "success" {
-		log.Printf("Error: API connectivity test returned status: %s", st.Status)
+		meta.logf("Error: API connectivity test returned status: %s", st.Status)
 		return false, nil
 	}
 
 	major, minor, ok := version.ParseVersion(st.Version)
 	if !ok {
-		log.Printf("Error: Failed to parse OS version: %q", st.Version)
+		meta.logf("Error: Failed to parse OS version: %q", st.Version)
 		return false, nil
 	}
 
-	meta := &TargetMetadata{
-		VersionMajor: major,
-		VersionMinor: minor,
-	}
+	meta.VersionMajor = major
+	meta.VersionMinor = minor
 
-	includedProbes := savedConfig.AuthKeys[config.Target(u.String())].Probes.Include
-	excludedProbes := savedConfig.AuthKeys[config.Target(u.String())].Probes.Exclude
+	includedProbes := auth.Probes.Include
+	excludedProbes := auth.Probes.Exclude
 
 	// TODO: Make parallel
 	success := true

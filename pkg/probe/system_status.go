@@ -2,7 +2,6 @@ package probe
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
@@ -31,7 +30,7 @@ func probeSystemStatus(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Met
 	var st systemStatus
 
 	if err := c.Get("api/v2/monitor/system/status", "", &st); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

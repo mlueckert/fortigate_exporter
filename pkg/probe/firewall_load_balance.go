@@ -1,7 +1,6 @@
 package probe
 
 import (
-	"log"
 	"math"
 	"strconv"
 
@@ -88,7 +87,7 @@ func probeFirewallLoadBalance(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 	// Consider implementing pagination to remove this limit of 1000 entries
 	var rs []LoadBalanceResponse
 	if err := c.Get("api/v2/monitor/firewall/load-balance", "vdom=*&start=0&count=1000", &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -131,7 +130,7 @@ func probeFirewallLoadBalance(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 					// NaN
 				} else {
 					if realServerRTTValueInMs, err := strconv.ParseFloat(realServer.RTT, 64); err != nil {
-						log.Printf("Failed to parse RTT value: %v", err)
+						meta.logf("Failed to parse RTT value: %v", err)
 					} else {
 						realServerRTTValue = realServerRTTValueInMs / 1000
 					}

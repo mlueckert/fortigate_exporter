@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -33,7 +31,7 @@ func probeWebUIState(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metri
 	var state webuiState
 
 	if err := c.Get("api/v2/monitor/web-ui/state", "", &state); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

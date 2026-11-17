@@ -1,7 +1,6 @@
 package probe
 
 import (
-	"log"
 	"reflect"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -37,7 +36,7 @@ func probeSystemHAChecksum(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 
 	var res HAChecksum
 	if err := c.Get("api/v2/monitor/system/ha-checksums", "scope=global", &res); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

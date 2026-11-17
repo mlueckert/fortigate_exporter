@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -94,7 +92,7 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 	var r HAResponse
 
 	if err := c.Get("api/v2/monitor/system/ha-statistics", "", &r); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -108,7 +106,7 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 	var rc HAConfig
 
 	if err := c.Get("api/v2/cmdb/system/ha", "", &rc); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

@@ -2,7 +2,6 @@ package probe
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/bluecmd/fortigate_exporter/internal/version"
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -62,14 +61,14 @@ func probeFirewallPolicies(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 
 	// NOTE: ip_version=ipv4 is a no-op if combined policies are not active
 	if err := c.Get("api/v2/monitor/firewall/policy/select", "vdom=*&ip_version=ipv4", &ps4); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
 	combined := false
 	maj, min, ok := version.ParseVersion(ps4[0].Version)
 	if !ok {
-		log.Printf("Could not parse version number %q", ps4[0].Version)
+		meta.logf("Could not parse version number %q", ps4[0].Version)
 		return nil, false
 	}
 	// If we are at 6.4 or later we use combined policies
@@ -79,12 +78,12 @@ func probeFirewallPolicies(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 
 	if !combined {
 		if err := c.Get("api/v2/monitor/firewall/policy6/select", "vdom=*", &ps6); err != nil {
-			log.Printf("Error: %v", err)
+			meta.logf("Error: %v", err)
 			return nil, false
 		}
 	} else {
 		if err := c.Get("api/v2/monitor/firewall/policy/select", "vdom=*&ip_version=ipv6", &ps6); err != nil {
-			log.Printf("Error: %v", err)
+			meta.logf("Error: %v", err)
 			return nil, false
 		}
 	}
@@ -107,12 +106,12 @@ func probeFirewallPolicies(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 	query := "vdom=*&policyid|name|uuid|action|status"
 
 	if err := c.Get("api/v2/cmdb/firewall/policy", query, &pc); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 	if !combined {
 		if err := c.Get("api/v2/cmdb/firewall/policy6", query, &pc6); err != nil {
-			log.Printf("Error: %v", err)
+			meta.logf("Error: %v", err)
 			return nil, false
 		}
 	}
@@ -140,7 +139,7 @@ func probeFirewallPolicies(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 		if s.ID > 0 {
 			c, ok := pcMap[s.UUID]
 			if !ok {
-				log.Printf("Warning: Failed to map %q to policy config - this should not happen", s.UUID)
+				meta.logf("Warning: Failed to map %q to policy config - this should not happen", s.UUID)
 				name = "<UNKNOWN>"
 			} else {
 				name = c.Name

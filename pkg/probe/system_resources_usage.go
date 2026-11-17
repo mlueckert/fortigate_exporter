@@ -2,7 +2,6 @@ package probe
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
@@ -54,7 +53,7 @@ func probeSystemResourceUsage(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 	var sr systemResourceUsage
 
 	if err := c.Get("api/v2/monitor/system/resource/usage", "interval=1-min&scope=global", &sr); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -112,7 +111,7 @@ func probeSystemVDOMResources(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 	var sr []systemResourceUsage
 
 	if err := c.Get("api/v2/monitor/system/resource/usage", "interval=1-min&vdom=*", &sr); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 	m := []prometheus.Metric{}

@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -50,7 +48,7 @@ func probeSystemAvailableCertificates(c http.FortiHTTP, meta *TargetMetadata) ([
 
 	var globalResponse Response
 	if err := c.Get("api/v2/monitor/system/available-certificates", "scope=global", &globalResponse); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 	globalResponse.Scope = "global"
@@ -58,7 +56,7 @@ func probeSystemAvailableCertificates(c http.FortiHTTP, meta *TargetMetadata) ([
 	var vdomResponses []Response
 
 	if err := c.Get("api/v2/monitor/system/available-certificates", "vdom=*", &vdomResponses); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 	for i := range vdomResponses {

@@ -1,7 +1,7 @@
 package probe
 
 import (
-	"log"
+	"encoding/json"
 	"strconv"
 
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
@@ -9,11 +9,11 @@ import (
 )
 
 type BGPNeighbor struct {
-	NeighborIP  string `json:"neighbor_ip"`
-	LocalIP     string `json:"local_ip"`
-	RemoteAS    int    `json:"remote_as"`
-	AdminStatus bool   `json:"admin_status"`
-	State       string `json:"state"`
+	NeighborIP  string      `json:"neighbor_ip"`
+	LocalIP     string      `json:"local_ip"`
+	RemoteAS    json.Number `json:"remote_as"`
+	AdminStatus bool        `json:"admin_status"`
+	State       string      `json:"state"`
 }
 
 type BGPNeighborResponse struct {
@@ -38,7 +38,7 @@ func probeBGPNeighborsIPv4(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 	var rs []BGPNeighborResponse
 
 	if err := c.Get("api/v2/monitor/router/bgp/neighbors", "vdom=*", &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -46,7 +46,7 @@ func probeBGPNeighborsIPv4(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 
 	for _, r := range rs {
 		for _, peer := range r.Results {
-			m = append(m, prometheus.MustNewConstMetric(mBGPNeighbor, prometheus.GaugeValue, bgpStateToNumber(peer.State), r.VDOM, strconv.Itoa(peer.RemoteAS), peer.State, strconv.FormatBool(peer.AdminStatus), peer.LocalIP, peer.NeighborIP))
+			m = append(m, prometheus.MustNewConstMetric(mBGPNeighbor, prometheus.GaugeValue, bgpStateToNumber(peer.State), r.VDOM, peer.RemoteAS.String(), peer.State, strconv.FormatBool(peer.AdminStatus), peer.LocalIP, peer.NeighborIP))
 		}
 	}
 
@@ -70,7 +70,7 @@ func probeBGPNeighborsIPv6(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 	var rs []BGPNeighborResponse
 
 	if err := c.Get("api/v2/monitor/router/bgp/neighbors6", "vdom=*", &rs); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
@@ -78,7 +78,7 @@ func probeBGPNeighborsIPv6(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 
 	for _, r := range rs {
 		for _, peer := range r.Results {
-			m = append(m, prometheus.MustNewConstMetric(mBGPNeighbor, prometheus.GaugeValue, bgpStateToNumber(peer.State), r.VDOM, strconv.Itoa(peer.RemoteAS), peer.State, strconv.FormatBool(peer.AdminStatus), peer.LocalIP, peer.NeighborIP))
+			m = append(m, prometheus.MustNewConstMetric(mBGPNeighbor, prometheus.GaugeValue, bgpStateToNumber(peer.State), r.VDOM, peer.RemoteAS.String(), peer.State, strconv.FormatBool(peer.AdminStatus), peer.LocalIP, peer.NeighborIP))
 		}
 	}
 

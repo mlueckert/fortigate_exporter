@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/bluecmd/fortigate_exporter/internal/config"
@@ -30,6 +31,10 @@ func ProbeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Target parameter missing or empty", http.StatusBadRequest)
 		return
 	}
+	targetHost := "invalid"
+	if parsed, err := url.Parse(target); err == nil {
+		targetHost = parsed.Hostname()
+	}
 	probeSuccessGauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "probe_success",
 		Help: "Whether or not the probe succeeded",
@@ -48,7 +53,7 @@ func ProbeHandler(w http.ResponseWriter, r *http.Request) {
 	registry.MustRegister(pc)
 	success, err := pc.Probe(ctx, paramMap, &http.Client{}, savedConfig)
 	if err != nil {
-		log.Printf("Probe request rejected; error is: %v", err)
+		log.Printf("target=%q Probe request rejected; error is: %v", targetHost, err)
 		http.Error(w, fmt.Sprintf("probe: %v", err), http.StatusBadRequest)
 		return
 	}
@@ -58,7 +63,7 @@ func ProbeHandler(w http.ResponseWriter, r *http.Request) {
 		probeSuccessGauge.Set(1)
 	} else {
 		// probeSuccessGauge default is 0
-		log.Printf("Probe of %q failed, took %.3f seconds", target, duration)
+		log.Printf("Probe of %q failed, took %.3f seconds", targetHost, duration)
 	}
 	h := promhttp.HandlerFor(registry, promhttp.HandlerOpts{})
 	h.ServeHTTP(w, r)

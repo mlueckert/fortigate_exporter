@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -72,7 +70,7 @@ func probeWifiClients(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metr
 	// Consider implementing pagination to remove this limit of 1000 entries
 	var response ApiWifiClientResponse
 	if err := c.Get("api/v2/monitor/wifi/client", "vdom=*&start=0&count=1000", &response); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 

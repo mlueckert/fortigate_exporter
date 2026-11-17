@@ -1,8 +1,6 @@
 package probe
 
 import (
-	"log"
-
 	"github.com/bluecmd/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -27,7 +25,7 @@ func probeSystemTime(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.Metri
 	var stime systemTime
 
 	if err := c.Get("api/v2/monitor/system/time", "vdom=root", &stime); err != nil {
-		log.Printf("Error: %v", err)
+		meta.logf("Error: %v", err)
 		return nil, false
 	}
 
